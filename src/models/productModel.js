@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema({
     },
     picture: {
         type: String,
-        required: true,
+        required: false,
     }
 }, { timestamps: true });
 
