@@ -1,65 +1,31 @@
-const Product = require('../models/productModel');
+const multer = require('multer');
+const path = require('path');
 
-exports.createProduct = async (req, res) => {
-    const { name, descricao, quantidade } = req.body;
+// Configuração do Multer para armazenamento de arquivos
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads'); // Diretório onde os arquivos serão armazenados
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Nome único para o arquivo
+  }
+});
 
-    try {
-        if (!req.file) {
-            return res.status(400).send('Nenhum arquivo foi enviado');
-        }
-
-        const picture = `/uploads/${req.file.filename}`; // Caminho da imagem
-
-        const product = new Product({ name, descricao, quantidade, picture });
-
-        await product.save();
-        res.status(201).json({ message: "Produto criado com sucesso!" });
-    } catch (err) {
-        res.status(400).json({ err: err.message });
-    }
+// Limitações de tipo de arquivo (apenas imagens)
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Tipo de arquivo não permitido'), false);
+  }
 };
 
-exports.getProducts = async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.status(200).json(products);
-    } catch (err) {
-        res.status(400).json({ err: err.message });
-    }
-};
+// Configuração do multer
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // Limite de 5MB
+});
 
-exports.updateProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, descricao, quantidade, picture } = req.body;
-
-        const updatedProduct = await Product.findByIdAndUpdate(
-            id,
-            { name, descricao, quantidade, picture },
-            { new: true }
-        );
-
-        if (!updatedProduct) {
-            return res.status(404).json({ error: 'Produto não encontrado' });
-        }
-
-        res.status(200).json(updatedProduct);
-    } catch (err) {
-        res.status(500).json({ error: "Erro ao atualizar produto" });
-    }
-};
-
-exports.deleteProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletedProduct = await Product.findByIdAndDelete(id);
-
-        if (!deletedProduct) {
-            return res.status(404).json({ error: 'Produto não encontrado' });
-        }
-
-        res.status(200).json({ message: 'Produto deletado com sucesso!' });
-    } catch (err) {
-        res.status(500).json({ error: 'Erro ao tentar excluir produto' });
-    }
-};
+module.exports = upload;
