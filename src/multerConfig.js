@@ -1,37 +1,39 @@
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
-const uploadDir = path.join(__dirname, 'uploads');
+const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-// Configuração do Multer para armazenamento de arquivos
+// Configuração do Multer
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads'); // Diretório onde os arquivos serão armazenados
+  destination: function (req, file, cb) {
+    cb(null, uploadDir); // Usando o diretório uploads
   },
-  filename: (req, file, cb) => {
+  filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname)); // Nome único para o arquivo
-  }
+  },
 });
 
-// Limitações de tipo de arquivo (apenas imagens)
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Tipo de arquivo não permitido'), false);
+const upload = multer({ storage: storage });
+
+// Seu código de rota POST
+app.post("/products/create", upload.single("picture"), async (req, res) => {
+  const { name, descricao, quantidade } = req.body;
+  const picture = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (!req.file) {
+    return res.status(400).send("Nenhum arquivo foi enviado");
   }
-};
 
-// Configuração do multer
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // Limite de 5MB
+  try {
+    const product = new Product({ name, descricao, quantidade, picture });
+    await product.save();
+    res.status(201).json({ message: "Produto criado com sucesso!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro no servidor ao criar o produto" });
+  }
 });
-
-module.exports = upload;
