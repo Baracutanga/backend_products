@@ -49,8 +49,9 @@ app.post("/products/create", upload.single("picture"), async (req, res) => {
 });
 
 // Inicia o servidor na porta 10000
-app.listen(10000, () => {
-  console.log('Servidor rodando na porta 10000');
+const port = process.env.PORT || 10000;  // Render usa a variável de ambiente PORT
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
 });
 
 module.exports = upload;
