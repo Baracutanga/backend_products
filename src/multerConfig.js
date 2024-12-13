@@ -52,3 +52,5 @@ app.post("/products/create", upload.single("picture"), async (req, res) => {
 app.listen(10000, () => {
   console.log('Servidor rodando na porta 10000');
 });
+
+module.exports = upload;
