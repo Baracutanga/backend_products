@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 
 app.use("/products", productRoutes);
 
-app.use('/upload', express.static(path.join(__dirname, 'upload')));
+app.use("/uploads", express.static(path.join(__dirname, "upload")));
 
 app.post("/upload", upload.single("photo"), (req, res) => {
   // 'photo' é o nome do campo no formulário que contém o arquivo
