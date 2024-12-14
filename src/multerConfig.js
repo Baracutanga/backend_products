@@ -4,8 +4,8 @@ const fs = require('fs');
 
 const pastaUpload = path.resolve(__dirname, "upload");
 
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath);
+if (!fs.existsSync(pastaUpload)) {
+  fs.mkdirSync(pastaUpload);
 }
 
 const storage = multer.diskStorage({
