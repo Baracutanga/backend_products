@@ -5,6 +5,7 @@ const cors = require("cors");
 const connectDB = require("./config/database");
 const productRoutes = require("./routes/productRoutes");
 const upload = require("./multerConfig");
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
