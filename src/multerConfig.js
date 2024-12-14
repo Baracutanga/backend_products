@@ -3,7 +3,7 @@ const path = require('path');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const pastaUpload = path.resolve(__dirname, ".", "upload");
+    const pastaUpload = path.resolve(__dirname, "upload");
     cb(null, pastaUpload);
   },
   filename: (req, file, cb) => {
