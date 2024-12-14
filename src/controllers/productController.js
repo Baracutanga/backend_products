@@ -5,7 +5,7 @@ exports.createProduct = async (req, res) => {
   const { name, descricao, quantidade } = req.body;
 
   try {
-    const picture = `/uploads/${req.file.filename}`; // Caminho da imagem enviada
+    const picture = req.file ? `/uploads/${req.file.filename}` : null;
 
     const product = new Product({
       name,
@@ -34,11 +34,18 @@ exports.getProducts = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, descricao, quantidade, picture } = req.body;
+    const { name, descricao, quantidade } = req.body;
+
+    const picture = req.file ? `/uploads/${req.file.filename}` : undefined;
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, descricao, quantidade, picture },
+      { 
+        name, 
+        descricao, 
+        quantidade, 
+        ...(picture && { picture }) // Atualiza o campo "picture" apenas se a nova imagem for enviada
+      },
       { new: true }
     );
 
