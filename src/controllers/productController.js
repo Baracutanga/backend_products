@@ -7,6 +7,8 @@ exports.createProduct = async (req, res) => {
   try {
     const picture = req.file ? `/uploads/${req.file.filename}` : null;
 
+    console.log('Imagem recebida:', picture);
+
     const product = new Product({
       name,
       descricao,
