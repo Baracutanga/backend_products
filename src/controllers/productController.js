@@ -1,19 +1,16 @@
 const Product = require("../models/productModel");
 const upload = require("../multerConfig"); // Importando o multerConfig
 
-// Rota para criar um novo produto
 exports.createProduct = async (req, res) => {
   const { name, descricao, quantidade } = req.body;
 
   try {
-    // Verificando se o arquivo foi enviado
     if (!req.file) {
       return res.status(400).send("Nenhum arquivo foi enviado");
     }
 
     const picture = `/uploads/${req.file.filename}`; // Caminho da imagem enviada
 
-    // Criando o produto
     const product = new Product({
       name,
       descricao,
@@ -21,7 +18,6 @@ exports.createProduct = async (req, res) => {
       picture,
     });
 
-    // Salvando o produto no banco de dados
     await product.save();
     res.status(200).json({ message: "Produto criado com sucesso!" });
   } catch (err) {
@@ -29,7 +25,6 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// Rota para obter todos os produtos
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find();
