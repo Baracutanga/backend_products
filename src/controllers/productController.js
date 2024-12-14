@@ -5,10 +5,6 @@ exports.createProduct = async (req, res) => {
   const { name, descricao, quantidade } = req.body;
 
   try {
-    if (!req.file) {
-      return res.status(400).send("Nenhum arquivo foi enviado");
-    }
-
     const picture = `/uploads/${req.file.filename}`; // Caminho da imagem enviada
 
     const product = new Product({
